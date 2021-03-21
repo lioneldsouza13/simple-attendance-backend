@@ -53,13 +53,8 @@ app.post('/api/modules', (req, res) => {
 //TO FETCH ACTIVE MODULES
 app.get('/api/modules', async (req, res) => {
   
-    const collectionName = req.body.collectionName
+    const collectionName = "modules"
 
-    //Check for valid Collection name
-    if (modules.validateBody(collectionName) == true) {
-        res.send("Collection name is missing");
-        return
-    }
     //Fetching Data from Database
     const fetchedData = await sqlActivity.fetchData(collectionName).then((response) => {
         return response
