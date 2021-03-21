@@ -81,6 +81,123 @@ app.get('/api/modules', async (req, res) => {
 })
 
 
+//UDPATE MODULES
+app.post('/api/updateModule', async (req, res) => {
+
+    const module_name = req.body.moduleName
+    var active = req.body.active
+
+    //Default name
+    const collectionName = 'modules'
+
+    //Check if module name is valid and not empty
+    if (modules.validateBody(module_name) == true) {
+        res.send("Enter a valid Module name")
+        return
+    }
+
+    //Check if active is not empty (if empty set default value yes)
+    active = active == null || active.trim() == "" ? 'Yes' : active
+
+    //Data to be passed to Firebase
+    const data = { module_name, active }
+
+    //Fetching Data from Database
+   const fetchedData=await sqlActivity.fetchData(collectionName).then((response) => {
+      return response
+    }).catch((response) => {
+        res.send(response);
+        return
+    })
+    
+    //Getting keys for data to be updated
+    const fetchedKeys=  await modules.getKeyForModule(fetchedData,module_name)
+
+    //Check if any keys found
+    const status= fetchedKeys.length===0?true:false
+    if(status===true) 
+    {
+    res.send("No Data Found");    
+    return
+    }
+
+    //Update data in database
+    const updatedData=async(fetchedKeys,data,collectionName)=>{  
+        var updatedResponse=""
+        for(let item of fetchedKeys)
+        {
+        const newCollectionName=collectionName+"/"+item
+         await  sqlActivity.updateData(data,newCollectionName).then((response) => {
+            updatedResponse="Data Successfully Updated"
+          }).catch((response) => {
+              updatedResponse=response
+              return
+          })
+        }
+        return updatedResponse
+    }
+
+   //Send final status of data 
+   const finalResponse= await updatedData(fetchedKeys,data,collectionName)
+    res.send(finalResponse)
+
+})
+
+//DELETING MODULE
+app.post('/api/deleteModule', async (req, res) => {
+
+    const module_name = req.body.moduleName
+
+    //Default name
+    const collectionName = 'modules'
+
+    //Check if module name is valid and not empty
+    if (modules.validateBody(module_name) == true) {
+        res.send("Enter a valid Module name")
+        return
+    }
+
+    //Fetching Data from Database
+   const fetchedData=await sqlActivity.fetchData(collectionName).then((response) => {
+      return response
+    }).catch((response) => {
+        res.send(response);
+        return
+    })
+    
+    //Getting keys for data to be updated
+    const fetchedKeys=  await modules.getKeyForModule(fetchedData,module_name)
+
+    //Check if any keys found
+    const status= fetchedKeys.length===0?true:false
+    if(status===true) 
+    {
+    res.send("No Data Found");    
+    return
+    }
+
+    //Update data in database
+    const deletedData=async(fetchedKeys,collectionName)=>{  
+        var updatedResponse=""
+        for(let item of fetchedKeys)
+        {
+        const newCollectionName=collectionName+"/"+item
+         await  sqlActivity.deleteData(newCollectionName).then((response) => {
+            updatedResponse="Data Successfully Removed"
+          }).catch((response) => {
+              updatedResponse=response
+              return
+          })
+        }
+        return updatedResponse
+    }
+
+   //Send final status of data 
+   const finalResponse= await deletedData(fetchedKeys,collectionName)
+    res.send(finalResponse)
+
+})
+
 app.listen(PORT, (req, res) => {
     console.log(`Listening on port ${PORT}`);
 })

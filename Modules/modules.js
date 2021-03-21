@@ -10,14 +10,28 @@ async function getActiveModuleData(response)
     return data   
 }
 
-async function validateData(data){
+function validateData(data){
     return data==null ? true:false
 }
-async function validateBody(data){
+function validateBody(data){
     return data==null || data.trim()==""?true:false
 }
 
+async function getKeyForModule(data,valueName){
+    var keys=[]
+    for(let [key,value] of Object.entries(data))
+    {
+            if(value.module_name==valueName)
+            {
+                keys.push(key)
+            }
+    }
+    return keys
+}
+
+
+
 
 module.exports={
-    getActiveModuleData,validateData,validateBody
+    getActiveModuleData,validateData,validateBody,getKeyForModule
 }
