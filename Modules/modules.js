@@ -29,9 +29,18 @@ async function getKeyForModule(data,valueName){
     return keys
 }
 
+async function getAllModuleData(response)
+{  
+    var data=[]  
+        for(let [key,value] of Object.entries(response))
+        {
+              data.push(value)     
+        }  
+    return data   
+}
 
 
 
 module.exports={
-    getActiveModuleData,validateData,validateBody,getKeyForModule
+    getActiveModuleData,validateData,validateBody,getKeyForModule,getAllModuleData
 }

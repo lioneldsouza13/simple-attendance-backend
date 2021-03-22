@@ -193,6 +193,30 @@ app.post('/api/deleteModule', async (req, res) => {
 
 })
 
+
+app.get('/api/allModules',async (req,res)=>{
+    const collectionName = "modules"
+
+    //Fetching Data from Database
+    const fetchedData = await sqlActivity.fetchData(collectionName).then((response) => {
+        return response
+    }).catch((response) => {
+        res.send(response);
+    })
+
+    //If no values fetched from server
+    if (modules.validateData(fetchedData) == true) {
+        res.send("No Data found")
+        return
+    }
+
+    //Creating an Array of result
+    const arrangingData = await modules.getAllModuleData(fetchedData);
+
+    //Sending Result
+    res.send(arrangingData)
+})
+
 app.listen(PORT, (req, res) => {
     console.log(`Listening on port ${PORT}`);
 })
