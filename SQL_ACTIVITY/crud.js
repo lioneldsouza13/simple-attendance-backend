@@ -5,7 +5,7 @@ const insertData = (data,collectionName) => {
     const pushData = firebaseConnection.database.ref('/' + collectionName);
     const promise = new Promise((resolve, reject) => {
         pushData.push(data).then((response) => {
-            resolve("Data Saved Successfully");
+            resolve({message:"Data Saved Successfully"});
         }).catch((response) => {
             reject(response)
         })
@@ -32,7 +32,7 @@ const updateData =(data,collectionName)=>{
     const pushData = firebaseConnection.database.ref('/' + collectionName);
     const promise = new Promise((resolve, reject) => {
         pushData.update(data).then((response) => {
-            resolve("Data Updated Successfully");
+            resolve({message:"Data Updated Successfully"});
         }).catch((response) => {
             reject(response)
         })
@@ -45,7 +45,7 @@ const deleteData =(collectionName)=>{
     const pushData = firebaseConnection.database.ref('/' + collectionName);
     const promise = new Promise((resolve, reject) => {
         pushData.remove().then((response) => {
-            resolve("Data Removed Successfully");
+            resolve({message:"Data Removed Successfully"});
         }).catch((response) => {
             reject(response)
         })
