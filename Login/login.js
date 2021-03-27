@@ -1,5 +1,5 @@
 const firebaseConnection = require('./../DatabaseConnection/DBConnection')
-
+const {createToken,decodeToken} = require('../Middleware/jsonwebtoken')
 //USER SIGN UP
 async function signup(email,password){
 const result=await firebaseConnection.firebase.auth().createUserWithEmailAndPassword(email, password)
@@ -9,22 +9,20 @@ const result=await firebaseConnection.firebase.auth().createUserWithEmailAndPass
    const promise= new Promise((resolve,reject)=>{  
     resolve({
         uid:user.uid,
-        email:user.email
+        email:user.email,
     })
     })
     return promise
    
   })
   .catch((error) => {
-    var errorCode = error.code;
-    var errorMessage = error.message;
     const promise=  new Promise((resolve,reject)=>{
         resolve(error)
     })
     return promise
    
   });
-
+  
   return result
 }
 
@@ -79,7 +77,7 @@ async function deleteUser(email){
   const user = await getUserByEmail(email);
   if(user.status ==='Failed')
   {
-    return user.error
+    return user
   }
  
   //Deleting Specific User
@@ -87,10 +85,13 @@ async function deleteUser(email){
   .auth()
   .deleteUser(user.uid)
   .then(() => {
-    return 'Successfully deleted user'
+    const message = {message:'User Deleted Successfully'}
+    return message
+    
   })
   .catch((error) => {
-    return error
+    const message = {status:'Error',message : error.message}
+    return message
   });
   return admin
 }
