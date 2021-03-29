@@ -17,6 +17,7 @@ const result=await firebaseConnection.firebase.auth().createUserWithEmailAndPass
   })
   .catch((error) => {
     const promise=  new Promise((resolve,reject)=>{
+      error.status=true
         resolve(error)
     })
     return promise
@@ -44,6 +45,7 @@ async function login(email,password){
     })
     .catch((error) => {
       const promise=  new Promise((resolve,reject)=>{
+        error.status=true
         resolve(error)
     })
     return promise
@@ -64,6 +66,7 @@ async function resetPassword(email){
 return promise
 }).catch(function(error) {
   const promise= new Promise((resolve,reject)=>{  
+    error.status=true
     resolve(error)
 })
 return promise
@@ -72,9 +75,12 @@ return promise
 }
 
 //DELETE USER
-async function deleteUser(email){
+async function deleteUser(uid){
   //Checking for valid User
-  const user = await getUserByEmail(email);
+ // const user = await getUserByEmail(email);
+  const user ={
+    uid:uid
+  }
   if(user.status ==='Failed')
   {
     return user
@@ -119,7 +125,20 @@ async function getUserByEmail(email){
   return admin
 }
 
+async function refreshJWTToken(email){
+  const user = await getUserByEmail(email);
+ 
+   if(user.status ==='Failed')
+   {
+    return user
+  }
+
+  var token = await createToken({uid:user.uid})
+  user.token=token 
+  return token
+}
+
 
   module.exports ={
-        signup,login,resetPassword,deleteUser
+        signup,login,resetPassword,deleteUser,refreshJWTToken
   }

@@ -38,8 +38,13 @@ router.post('/decrypt',async (req,res)=>{
         res.send('Enter a valid data')
         return
     }
-    const result =  await encrypt.decryptData(data)
-    res.send(result)
+    try {
+        const result =  await encrypt.decryptData(data)
+        res.send(result)
+    } catch (error) {
+        res.send({message:error.message})
+    }
+   
 })
 
 

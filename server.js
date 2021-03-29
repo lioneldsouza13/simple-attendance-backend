@@ -35,6 +35,12 @@ app.use('/api/encryptionRoutes',encryptionRoutes)
 //JWT TESTING
 app.use('/api/jwt',jwtRoutes)
 
+
+//FOR INVALID LINK
+app.use('/',(req,res)=>{
+    res.status(404).send({message:'404 Not Found'})
+})
+
 app.listen(PORT, (req, res) => {
     console.log(`Listening on port ${PORT}`);
 })

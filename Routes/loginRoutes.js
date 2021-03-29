@@ -21,17 +21,17 @@ router.use((req,res,next)=>{
 router.post('/signup',async (req,res)=>{
     var email = req.body.email
     var password = req.body.password   
-   
+   var httpStatus =403
    
     if(modules.validateBody(email) || modules.validateBody(password))
     {
         var message={message:"Enter a valid email and password"}
         if(req.header('enc')==='true')
         {
-            res.send(await encrypt.encryptData(JSON.stringify(message)))
+            res.status(401).send(await encrypt.encryptData(JSON.stringify(message)))
             return
         }
-        res.send(message)
+        res.status(401).send(message)
         return
     }
     
@@ -44,7 +44,7 @@ router.post('/signup',async (req,res)=>{
                email = await encrypt.decryptData(email);
                password = await encrypt.decryptData(password);
            } catch (error) {
-               res.send({
+               res.status(401).send({
                    status:'Decryption failed',
                    message:error.message
                }) 
@@ -54,16 +54,21 @@ router.post('/signup',async (req,res)=>{
    
    //SAVE USER IN DATABASE
    var result=await login.signup(email,password)
-   
-   var token = await jwt.createToken({uid:result.uid})
-   result.token=token
+   var token
+     if(!result.status)
+     {
+        token = await jwt.createToken({uid:result.uid})
+        result.token=token
+        httpStatus=200
+     }
+
    //Encryption
    if(req.header('enc')==='true')
    {
        result=await encrypt.encryptData(JSON.stringify(result))
    }
    
-   res.send(result)
+   res.status(httpStatus).send(result)
    })
    
    
@@ -71,17 +76,16 @@ router.post('/signup',async (req,res)=>{
    router.post('/login',async (req,res)=>{
        var email = req.body.email
        var password = req.body.password   
-   
-       
+        var httpStatus =403
       if(modules.validateBody(email) || modules.validateBody(password))
       {
        var message={message:"Enter a valid email and password"}
            if(req.header('enc')==='true')
            {
-               res.send(await encrypt.encryptData(JSON.stringify(message)))
+               res.status(401).send(await encrypt.encryptData(JSON.stringify(message)))
                return
            }
-           res.send(message)
+           res.status(401).send(message)
            return
       }
    
@@ -92,7 +96,7 @@ router.post('/signup',async (req,res)=>{
                email = await encrypt.decryptData(email);
                password = await encrypt.decryptData(password);
            } catch (error) {
-               res.send({
+               res.status(401).send({
                    status:'Decryption failed',
                    message:error.message
                }) 
@@ -102,31 +106,35 @@ router.post('/signup',async (req,res)=>{
    
       //VALIDATE USER
       var result=await login.login(email,password)
-      var token = await jwt.createToken({uid:result.uid})
-      result.token=token 
-
+      var token;
+      if(!result.status)
+      {
+        token = await jwt.createToken({uid:result.uid})
+        result.token=token 
+        httpStatus =200
+      }
       //Encryption
       if(req.header('enc')==='true')
        {
        result=await encrypt.encryptData(JSON.stringify(result))
        }
-   
-      res.send(result)
+
+      res.status(httpStatus).send(result)
       })
    
    //Reset Password
    router.post('/resetPassword',async(req,res)=>{
        var email= req.body.email
-   
+        
        if(modules.validateBody(email))
        {
            var message={message:"Enter a valid email"}
            if(req.header('enc')==='true')
            {
-               res.send(await encrypt.encryptData(JSON.stringify(message)))
+               res.status(401).send(await encrypt.encryptData(JSON.stringify(message)))
                return
            }
-           res.send(message)
+           res.status(401).send(message)
            return
        }
    
@@ -136,7 +144,7 @@ router.post('/signup',async (req,res)=>{
            try {
                email = await encrypt.decryptData(email);
            } catch (error) {
-               res.send({
+               res.status(401).send({
                    status:'Decryption failed',
                    message:error.message
                }) 
@@ -147,28 +155,30 @@ router.post('/signup',async (req,res)=>{
        //SEND RESET PASSWORD LINK
        var result = await login.resetPassword(email)
        
+       const httpStatus = result.status === true ? 403:200
+
        //Decryption
        if(req.header('enc')==='true')
        {
        result=await encrypt.encryptData(JSON.stringify(result))
        }
-       res.send(result)
+       res.status(httpStatus).send(result)
    })
    
    
    //Delete User
    router.post('/deleteUser',async(req,res)=>{
-       var email =req.body.email
+       var uid =req.body.uid
    
-       if(modules.validateBody(email))
+       if(modules.validateBody(uid))
        {
-           var message={message:"Enter a valid email"}
+           var message={message:"Enter a valid UID"}
            if(req.header('enc')==='true')
            {
-               res.send(await encrypt.encryptData(JSON.stringify(message)))
+               res.status(401).send(await encrypt.encryptData(JSON.stringify(message)))
                return
            }
-           res.send(message)
+           res.status(401).send(message)
            return
        }
    
@@ -176,9 +186,9 @@ router.post('/signup',async (req,res)=>{
        if(req.header('enc')==='true')
        {
            try {
-               email = await encrypt.decryptData(email);
+               uid = await encrypt.decryptData(uid);
            } catch (error) {
-               res.send({
+               res.status(401).send({
                    status:'Decryption failed',
                    message:error.message
                }) 
@@ -188,14 +198,34 @@ router.post('/signup',async (req,res)=>{
    
    
        //VALIDATE AND DELETE USER
-       var result = await login.deleteUser(email);
-   
+       var result = await login.deleteUser(uid);
+       var httpStatus = result.status === 'Error' ? 403 :200
        //Encryption
        if(req.header('enc')==='true')
        {
        result=await encrypt.encryptData(JSON.stringify(result))
        }
-       res.send(result)
+       res.status(httpStatus).send(result)
    })
    
+
+   router.post('/refreshToken',async (req,res)=>{
+   var email = req.body.email
+    if(req.header('enc')==='true')
+    {
+        try {
+            email = await encrypt.decryptData(email);
+        } catch (error) {
+            res.status(401).send({
+                status:'Decryption failed',
+                message:error.message
+            }) 
+           return
+        }
+    }
+     res.status(200).send(await login.refreshJWTToken(email))
+})
+
+
+
 module.exports = router

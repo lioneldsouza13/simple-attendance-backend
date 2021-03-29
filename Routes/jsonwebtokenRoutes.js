@@ -3,7 +3,7 @@ var router = express.Router()
 const {validateHeaders} = require('../Middleware/middleware')
 const {createToken,decodeToken} = require('../Middleware/jsonwebtoken')
 router.use((req,res,next)=>{
-    const ignoreRoutes=[]
+    const ignoreRoutes=['/decode']
     if(ignoreRoutes.includes(req.path))
     {
         next()
@@ -14,7 +14,7 @@ router.use((req,res,next)=>{
 })
 
 
-router.post('/test',async (req,res)=>{
+router.post('/token',async (req,res)=>{
     
     res.send(await createToken(req.body.data))
 })
