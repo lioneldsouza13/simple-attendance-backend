@@ -9,7 +9,7 @@ var loginRoutes = require('./Routes/loginRoutes')
 var moduleRoutes = require('./Routes/moduleRoutes')
 var encryptionRoutes = require('./Routes/encryptRoutes')
 var jwtRoutes = require('./Routes/jsonwebtokenRoutes')
-
+var shopRoutes = require('./Routes/shopRoutes')
 //PORT TO BE USED
 const PORT = process.env.PORT || 3001;
 
@@ -35,11 +35,27 @@ app.use('/api/encryptionRoutes',encryptionRoutes)
 //JWT TESTING
 app.use('/api/jwt',jwtRoutes)
 
+//SHOPS ROUTES
+app.use('/api/shopRoutes',shopRoutes)
+
+
+//SHOP TESTING
+const data ={
+    uid:'1234',
+    shopName:'new shop 3',
+    vendorName: 'test q',
+    productName:'vegetable',
+    data:{
+    date:'30 mar 2021',
+    description :'1000 products received'
+    }
+    }
 
 //FOR INVALID LINK
 app.use('/',(req,res)=>{
     res.status(404).send({message:'404 Not Found'})
 })
+
 
 app.listen(PORT, (req, res) => {
     console.log(`Listening on port ${PORT}`);
