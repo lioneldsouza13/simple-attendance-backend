@@ -134,6 +134,10 @@ async function deleteShop(data){
     var collectionName1='Shop/Vendors'
     collectionName1 = collectionName1+'/'+data.uid+'/'+data.shopName
     const result1 = await deleteData(collectionName1)
+
+    var collectionName2='Shop/Products'
+    collectionName2 = collectionName2+'/'+data.uid+'/'+data.shopName+'/'+data.vendorName
+    const result2 = await deleteData(collectionName2)
     
     return result
 }
@@ -158,9 +162,100 @@ async function deleteVendor(data){
     collectionName = collectionName+'/'+data.uid+'/'+data.shopName+'/'+Foundkey
     const result = await deleteData(collectionName)
 
+    var collectionName2='Shop/Products'
+    collectionName2 = collectionName2+'/'+data.uid+'/'+data.shopName+'/'+data.vendorName
+    const result2 = await deleteData(collectionName2)
+
     return result
 }
 
+
+async function addProduct(data){
+    const shops = await getShop(data)
+
+    var shopFound = false
+    for(let value of Object.values(shops))
+    {
+        if(data.shopName === value)
+        {
+               shopFound=true 
+               break
+        }
+    }
+
+    if(!shopFound)
+    {
+        return {message:data.shopName + ' Shop not found'}
+    }
+
+    const vendors = await getVendor(data)
+    var vendorFound = false
+    for(let value of Object.values(vendors))
+    {
+        if(data.vendorName === value)
+        {
+            vendorFound=true 
+               break
+        }
+    }
+
+    if(!vendorFound)
+    {
+        return {message:data.vendorName + ' Vendor not Found'}
+    }
+
+    const products = await getProduct(data);
+    var productFound = false
+    for(let value of Object.values(products))
+    {
+        if(data.productName === value)
+        {
+            productFound=true 
+               break
+        }
+    }
+
+    if(productFound)
+    {
+        return {message:data.productName + ' Product already Exist'}
+    }
+    var count = Object.entries(products).length
+   
+    if(count>=5)
+    {
+        return {message:'No of Products Limit Exceeded'}
+    }
+
+
+    var collectionName='Shop/Products'
+    collectionName = collectionName+'/'+data.uid+'/'+data.shopName+'/'+data.vendorName
+    const result =await addData(data.productName,collectionName)
+    return result
+}
+
+
+async function deleteProduct(data){
+    const products = await getProduct(data)
+    var Foundkey=''
+    for(let key in products)
+    {   
+           if(products[key]===data.productName)
+           {   
+               Foundkey = key
+               break
+           } 
+    }
+
+    if(Foundkey.length ===0)
+    {
+        return {message:'No Product Found'}
+    }
+    var collectionName='Shop/Products'
+    collectionName = collectionName+'/'+data.uid+'/'+data.shopName+'/'+data.vendorName+'/'+Foundkey
+    const result = await deleteData(collectionName)
+
+    return result
+}
 
 
 async function deleteData(collectionName){
@@ -170,6 +265,18 @@ async function deleteData(collectionName){
         return {message : error.message}
     })
 
+    return result
+}
+
+
+async function getProduct(data){
+    var collectionName='Shop/Products'
+    collectionName = collectionName+'/'+data.uid+'/'+data.shopName+'/'+data.vendorName
+    const result = await getData(collectionName)
+    if(result == null)
+    {
+        return {message:'No data found'}
+    }
     return result
 }
 
@@ -184,7 +291,8 @@ async function getData(collectionName){
 }
 
 module.exports= {
-addShop,getShop,addVendor,getVendor,deleteShop,deleteVendor
+addShop,getShop,addVendor,getVendor,deleteShop,deleteVendor,addProduct,getProduct,
+deleteProduct
 }
 
 

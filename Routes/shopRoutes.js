@@ -9,7 +9,7 @@ const shops = require('../Modules/Shop/shop')
 
 router.use((req,res,next)=>{
     const ignoreRoutes=[]
-     if(!ignoreRoutes.includes(req.path))
+     if(ignoreRoutes.includes(req.path))
      {
          next()
          return
@@ -46,6 +46,21 @@ router.use((req,res,next)=>{
 
  })
 
+ router.post('/addProduct',async (req,res)=>{
+    // data = JSON.parse(req.body.data)
+    data = req.body.data
+     if(data === null || data === undefined)
+     {
+         res.status(401).send({message:'Enter valid Data'})
+         return
+     }
+ 
+     const result = await shops.addProduct(data)
+     res.send(result)
+ 
+  })
+ 
+
 router.post('/getShop',async (req,res)=>{
    // data = JSON.parse(req.body.data)
    data = req.body.data
@@ -73,6 +88,21 @@ router.post('/getVendor',async (req,res)=>{
     res.send(result)
 
 })
+
+router.post('/getProduct',async (req,res)=>{
+    // data = JSON.parse(req.body.data)
+    data = req.body.data
+    if(data === null || data === undefined)
+    {
+        res.status(401).send({message:'Enter valid Data'})
+        return
+    }
+    
+    const result = await shops.getProduct(data)
+    res.send(result)
+
+})
+
 
 router.post('/deleteShop',async (req,res)=>{
    // data = JSON.parse(req.body.data)
@@ -104,5 +134,18 @@ router.post('/deleteVendor',async (req,res)=>{
 
 })
 
+router.post('/deleteProduct',async (req,res)=>{
+    // data = JSON.parse(req.body.data)
+    data = req.body.data
+     if(data === null || data === undefined)
+     {
+         res.status(401).send({message:'Enter valid Data'})
+         return
+     }
+     
+     const result = await shops.deleteProduct(data)
+     res.send(result)
+ 
+ })
 
  module.exports = router 
