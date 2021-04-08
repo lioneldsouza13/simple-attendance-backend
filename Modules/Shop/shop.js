@@ -148,7 +148,7 @@ async function deleteShop(data){
     const result1 = await deleteData(collectionName1)
 
     var collectionName2='Shop/Products'
-    collectionName2 = collectionName2+'/'+data.uid+'/'+data.shopName+'/'+data.vendorName
+    collectionName2 = collectionName2+'/'+data.uid+'/'+data.shopName
     const result2 = await deleteData(collectionName2)
     
     var finalResult ={[Foundkey]:data.shopName}
