@@ -20,6 +20,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //ALLOW CROSS COMMUNICATION BETWEEN APPS
 app.use(cors());
 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname + '/client/build/index.html'));    
+  })
+
+
 //TO READ DATA FROM .ENV FILE
 require('dotenv').config()
 
@@ -57,13 +62,6 @@ app.use('/',(req,res)=>{
 })
 
 
-app.get("*", (req, res) => {
-
-    let path = req.params['0'].substring(1)
-  
-      res.sendFile(`${__dirname}/build/${path}`);
-    
-  });
 
 
 app.listen(PORT, (req, res) => {
