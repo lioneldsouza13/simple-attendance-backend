@@ -29,7 +29,7 @@ require('dotenv').config()
     "type": process.env.type_admin,
   "project_id": process.env.project_id_admin,
   "private_key_id": process.env.private_key_id_admin,
-  "private_key": process.env.private_key_admin,
+  "private_key": process.env.private_key_admin.replace(/\\n/g, '\n'),
   "client_email": process.env.client_email_admin,
   "client_id": process.env.client_id_admin,
   "auth_uri": process.env.auth_uri_admin,
