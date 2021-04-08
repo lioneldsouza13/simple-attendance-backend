@@ -5,7 +5,7 @@ const insertData = (data,collectionName) => {
     const pushData = firebaseConnection.database.ref('/' + collectionName);
     const promise = new Promise((resolve, reject) => {
         pushData.push(data).then((response) => {
-            resolve({message:"Data Saved Successfully"});
+            resolve({message:"Data Saved Successfully",key:response.path.pieces_});
         }).catch((response) => {
             reject(response)
         })

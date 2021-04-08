@@ -27,7 +27,8 @@ router.use((req,res,next)=>{
     }
 
     const result = await shops.addShop(data)
-    res.send(result)
+    const statusCode = result.statusCode === undefined ? 200 :result.statusCode
+    res.status(statusCode).send(result)
 
  })
 
@@ -42,7 +43,8 @@ router.use((req,res,next)=>{
     }
 
     const result = await shops.addVendor(data)
-    res.send(result)
+    const statusCode = result.statusCode === undefined ? 200 :result.statusCode
+    res.status(statusCode).send(result)
 
  })
 
@@ -56,7 +58,8 @@ router.use((req,res,next)=>{
      }
  
      const result = await shops.addProduct(data)
-     res.send(result)
+     const statusCode = result.statusCode === undefined ? 200 :result.statusCode
+     res.status(statusCode).send(result)
  
   })
  
@@ -71,8 +74,8 @@ router.post('/getShop',async (req,res)=>{
     }
     
     const result = await shops.getShop(data)
-    res.send(result)
-
+    const statusCode = result.statusCode === undefined ? 200 :result.statusCode
+    res.status(statusCode).send(result)
 })
 
 router.post('/getVendor',async (req,res)=>{
@@ -85,7 +88,8 @@ router.post('/getVendor',async (req,res)=>{
     }
     
     const result = await shops.getVendor(data)
-    res.send(result)
+    const statusCode = result.statusCode === undefined ? 200 :result.statusCode
+    res.status(statusCode).send(result)
 
 })
 
@@ -99,7 +103,8 @@ router.post('/getProduct',async (req,res)=>{
     }
     
     const result = await shops.getProduct(data)
-    res.send(result)
+    const statusCode = result.statusCode === undefined ? 200 :result.statusCode
+    res.status(statusCode).send(result)
 
 })
 
@@ -114,7 +119,8 @@ router.post('/deleteShop',async (req,res)=>{
     }
     
     const result = await shops.deleteShop(data)
-    res.send(result)
+    const statusCode = result.statusCode === undefined ? 200 :result.statusCode
+    res.status(statusCode).send(result)
 
 })
 
@@ -130,7 +136,8 @@ router.post('/deleteVendor',async (req,res)=>{
     }
     
     const result = await shops.deleteVendor(data)
-    res.send(result)
+    const statusCode = result.statusCode === undefined ? 200 :result.statusCode
+    res.status(statusCode).send(result)
 
 })
 
@@ -144,7 +151,8 @@ router.post('/deleteProduct',async (req,res)=>{
      }
      
      const result = await shops.deleteProduct(data)
-     res.send(result)
+     const statusCode = result.statusCode === undefined ? 200 :result.statusCode
+    res.status(statusCode).send(result)
  
  })
 

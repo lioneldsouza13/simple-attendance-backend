@@ -81,10 +81,10 @@ async function deleteUser(uid){
   const user ={
     uid:uid
   }
-  if(user.status ==='Failed')
-  {
-    return user
-  }
+  // if(user.status ==='Failed')
+  // {
+  //   return user
+  // }
  
   //Deleting Specific User
   const admin = await firebaseConnection.admin
