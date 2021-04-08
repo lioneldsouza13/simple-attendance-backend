@@ -57,6 +57,15 @@ app.use('/',(req,res)=>{
 })
 
 
+app.get("*", (req, res) => {
+
+    let path = req.params['0'].substring(1)
+  
+      res.sendFile(`${__dirname}/build/${path}`);
+    
+  });
+
+
 app.listen(PORT, (req, res) => {
     console.log(`Listening on port ${PORT}`);
 })
