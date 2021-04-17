@@ -156,4 +156,49 @@ router.post('/deleteProduct',async (req,res)=>{
  
  })
 
+
+ router.post('/addShopData',async(req,res)=>{
+    data = req.body.data
+    if(data === null || data === undefined)
+    {
+        res.status(401).send({message:'Enter valid Data'})
+        return
+    }
+
+    const result = await shops.addShopData(data)
+    const statusCode = result.statusCode === undefined ? 200 :result.statusCode
+   res.status(statusCode).send(result)
+ })
+
+
+
+ 
+ router.post('/getShopData',async(req,res)=>{
+    data = req.body.data
+    if(data === null || data === undefined)
+    {
+        res.status(401).send({message:'Enter valid Data'})
+        return
+    }
+
+    const result = await shops.getShopData(data)
+    const statusCode = result.statusCode === undefined ? 200 :result.statusCode
+   res.status(statusCode).send(result)
+ })
+
+
+ 
+ router.post('/deleteShopData',async(req,res)=>{
+    data = req.body.data
+    if(data === null || data === undefined)
+    {
+        res.status(401).send({message:'Enter valid Data'})
+        return
+    }
+
+    const result = await shops.deleteShopData(data)
+    const statusCode = result.statusCode === undefined ? 200 :result.statusCode
+   res.status(statusCode).send(result)
+ })
+
  module.exports = router 

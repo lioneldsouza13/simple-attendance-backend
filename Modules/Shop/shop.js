@@ -280,6 +280,34 @@ async function deleteProduct(data){
 }
 
 
+//Delete Shop Data
+
+async function deleteShopData(data){
+    const products = await getShopData(data)
+    var Foundkey=''
+    for(let key in products)
+    {   
+           if(key===data.key)
+           {   
+               Foundkey = key
+               break
+           } 
+    }
+    
+    if(Foundkey.length ===0)
+    {
+        return {message:'No Product Found',statusCode:404}
+    }
+    var collectionName='Shop/Data'
+    collectionName = collectionName+'/'+data.uid+'/'+data.shopName+'/'+data.vendorName+'/'+data.productName+'/'+Foundkey
+    const result = await deleteData(collectionName)
+
+    var finalResult ={[Foundkey]:data.productName}
+    return finalResult
+}
+
+
+
 async function deleteData(collectionName){
    const result = await sqlActivity.deleteData(collectionName).then((response)=>{
         return response
@@ -302,6 +330,17 @@ async function getProduct(data){
     return result
 }
 
+async function getShopData(data){
+    var collectionName='Shop/Data'
+    collectionName = collectionName+'/'+data.uid+'/'+data.shopName+'/'+data.vendorName+'/'+data.productName
+    const result = await getData(collectionName)
+    if(result == null)
+    {
+        return {message:'No data found',statusCode:404}
+    }
+    return result
+}
+
 async function getData(collectionName){
     const result = await sqlActivity.fetchData(collectionName).then((response)=>{
        return response
@@ -312,9 +351,75 @@ async function getData(collectionName){
     return result
 }
 
+//Add shop Data
+async function addShopData(data){
+    const shops = await getShop(data)
+
+    var shopFound = false
+    for(let value of Object.values(shops))
+    {
+        if(data.shopName === value)
+        {
+               shopFound=true 
+               break
+        }
+    }
+
+    if(!shopFound)
+    {
+        return {message:data.shopName + ' Shop not found',statusCode:404}
+    }
+
+    const vendors = await getVendor(data)
+    var vendorFound = false
+    for(let value of Object.values(vendors))
+    {
+        if(data.vendorName === value)
+        {
+            vendorFound=true 
+               break
+        }
+    }
+
+    if(!vendorFound)
+    {
+        return {message:data.vendorName + ' Vendor not Found',statusCode:404}
+    }
+
+    const products = await getProduct(data);
+    var productFound = false
+    for(let value of Object.values(products))
+    {
+        if(data.productName === value)
+        {
+            productFound=true 
+               break
+        }
+    }
+
+    if(!productFound)
+    {
+        return {message:data.productName + ' Product not Found',statusCode:404}
+    }
+    
+    var collectionName='Shop/Data'
+    collectionName = collectionName+'/'+data.uid+'/'+data.shopName+'/'+data.vendorName+'/'+data.productName
+    var result =await addData(data.data,collectionName)
+
+    var keyArray = result.key
+    keyArray =keyArray[keyArray.length -1 ]
+
+    result ={[keyArray]:data.productName }
+    
+    return result
+  
+
+}
+
+
 module.exports= {
 addShop,getShop,addVendor,getVendor,deleteShop,deleteVendor,addProduct,getProduct,
-deleteProduct
+deleteProduct,addShopData,getShopData,deleteShopData
 }
 
 
